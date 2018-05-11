@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: a9f91b6b82df71446823f122ddc2e49a
+timeCreated: 1523986852
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - ObstaclePrefab: {fileID: 1660187246353650, guid: 46ad3a46355a7804cbe6c5136c7dc433,
+      type: 2}
+  - GroundPrefab: {fileID: 1158411226253568, guid: 0d4a8f12c2992734c94b03a003a123ee,
+      type: 2}
+  - ChestPrefab: {fileID: 1041184295589480, guid: a2a1ccb26918b094798215cbd9d45c2c,
+      type: 2}
+  - BombPrefab: {fileID: 1651026728573776, guid: c4a531be69462884c829e711c01a25b8,
+      type: 2}
+  - PlayerPrefab: {fileID: 1913822339637818, guid: 18bcf3ec80d51a6408c31a2eef301a4d,
+      type: 2}
+  - EnemyPrefab: {fileID: 1292521762093972, guid: 170301dc0bbb5b7478e6351dced4903b,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,26 @@
+﻿<Properties StartupConfiguration="{246BDF6D-5C5A-269C-DC6C-707E39EA446F}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/MainMenuManager.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Character.cs" Line="64" Column="6" />
+      <File FileName="Assets/Scripts/GameManager.cs" Line="108" Column="26" />
+      <File FileName="Assets/Scripts/Enemy.cs" Line="32" Column="83" />
+      <File FileName="Assets/Scripts/SinglePlayerGameManager.cs" Line="119" Column="30" />
+      <File FileName="Assets/Scripts/Extensions.cs" Line="29" Column="40" />
+      <File FileName="Assets/Scripts/Bomb.cs" Line="25" Column="54" />
+      <File FileName="Assets/Scripts/MapGenerator.cs" Line="30" Column="1" />
+      <File FileName="Assets/Scripts/SpawnedObject.cs" Line="7" Column="1" />
+      <File FileName="Assets/Scripts/Player.cs" Line="5" Column="32" />
+      <File FileName="Assets/Scripts/Multi/OnlineGameManager.cs" Line="222" Column="56" />
+      <File FileName="Assets/Scripts/Multi/NetworkRequest.cs" Line="14" Column="26" />
+      <File FileName="Assets/Scripts/Multi/OtherPlayer.cs" Line="5" Column="33" />
+      <File FileName="Assets/Scripts/MainMenuManager.cs" Line="5" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.TAP_220-_220Esqueleto_220Networking PreferredExecutionTarget="Unity.Editor" />
+  <MultiItemStartupConfigurations />
+</Properties>

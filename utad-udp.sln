@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utad-udp", "utad-udp.csproj", "{65E33C28-0A65-FB5A-2A49-45A5338F16D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utad-udp.Plugins", "utad-udp.Plugins.csproj", "{F0FE358E-E7FD-9100-5C8B-741AF40BAFAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utad-udp.Editor", "utad-udp.Editor.csproj", "{D298D6F9-423A-8025-B6C9-B1FA5E4E8EBE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65E33C28-0A65-FB5A-2A49-45A5338F16D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E33C28-0A65-FB5A-2A49-45A5338F16D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E33C28-0A65-FB5A-2A49-45A5338F16D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E33C28-0A65-FB5A-2A49-45A5338F16D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0FE358E-E7FD-9100-5C8B-741AF40BAFAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0FE358E-E7FD-9100-5C8B-741AF40BAFAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0FE358E-E7FD-9100-5C8B-741AF40BAFAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0FE358E-E7FD-9100-5C8B-741AF40BAFAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D298D6F9-423A-8025-B6C9-B1FA5E4E8EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D298D6F9-423A-8025-B6C9-B1FA5E4E8EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D298D6F9-423A-8025-B6C9-B1FA5E4E8EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D298D6F9-423A-8025-B6C9-B1FA5E4E8EBE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
