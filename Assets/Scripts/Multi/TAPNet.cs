@@ -82,7 +82,7 @@ public class TAPNet {
 
     void Resend(int datagramId) {
         // TODO: Implementar
-        SendAck(datagramId, _pendingSentRequests[datagramId].id);
+        SendAck(datagramId, BitConverter.ToInt32(_pendingSentRequests[datagramId].data, 44));
     }
 
     /// <summary>
