@@ -49,6 +49,7 @@ public class TAPNet {
         Debug.Log("Listening...");
 		while (true) {
             var data = _client.Receive(ref _hostEP);
+            Debug.Log(data);
             ReceivedData(data);
         }
     }
@@ -81,6 +82,7 @@ public class TAPNet {
 
     void Resend(int datagramId) {
         // TODO: Implementar
+        SendAck(datagramId, _pendingSentRequests[datagramId].id);
     }
 
     /// <summary>
@@ -104,8 +106,8 @@ public class TAPNet {
     /// Comprueba que hayan llegado los ACK de los paquetes confiables enviados
     /// </summary>
     IEnumerator CheckAcks() {
-        // TODO: No hacer más de N reintentos
-        while (true) {
+        // No hacer más de N reintentos
+        for (int i = 0; i < 3; i++) {
             var now = DateTime.Now;
             foreach (var k in _pendingSentRequests.Keys) {
                 if (now.Subtract(_pendingSentRequests[k].timeStamp).TotalSeconds > 1.5) {
@@ -139,24 +141,26 @@ public class TAPNet {
 
     void ReceivedData(byte[] data) {
         try {
-            var datagramType = 0; // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 0
-            var datagramId = 0; // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 4
+
+            var datagramType = BitConverter.ToInt32(data, 0); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 0
+            var datagramId = BitConverter.ToInt32(data, 4); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 4
 
             if (datagramType != DATAGRAM_ACK) {
-                var expectedSha256 = new byte[32];  // Obtener de los datos recibidos, son 32 bytes, empezando por el 8
-                var numberOfChunks = 0; // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 40
-                var currentChunk = 0; // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 44
+                var expectedSha256 = data.Sub(8, 32);  // Obtener de los datos recibidos, son 32 bytes, empezando por el 8
+                var numberOfChunks = BitConverter.ToInt32(data, 40); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 40
+                var currentChunk = BitConverter.ToInt32(data, 44); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 44
 
                 if (!_receivedDatagrams.ContainsKey(datagramId)) {
                     _receivedDatagrams[datagramId] = new string[numberOfChunks];
                 }
+                var obtainedSha256 = CalculateSha256(data.Sub(48, data.Length - 48)); // Calculamos el Sha256 del mensaje (bytes desde el 48 hasta el final)
 
-                var obtainedSha256 = new byte[1]; // Calculamos el Sha256 del mensaje (bytes desde el 48 hasta el final)
-
-                // TODO: Solo dar por buenos los paquetes validados
-                _receivedDatagrams[datagramId][currentChunk] = Encoding.UTF8.GetString(data.Sub(48, data.Length - 48));
-
-                // TODO: Mandar el ACK si es necesario
+                // dar por buenos los paquetes validados
+                if(CompareSha256(expectedSha256, obtainedSha256)){
+                    _receivedDatagrams[datagramId][currentChunk] = Encoding.UTF8.GetString(data.Sub(48, data.Length - 48));
+                    // Enviar el ACK si el paquete es bueno
+                    SendAck(datagramId, currentChunk);
+                }
 
                 if (!_receivedDatagrams[datagramId].Any(y => y == null)) {
                     // Hemos recibido todas las partes correctamente
@@ -165,6 +169,7 @@ public class TAPNet {
                     _receivedDatagrams.Remove(datagramId);
                     if (onResponseReceived != null) {
                         onResponseReceived(JSON.Parse(responseString));
+                        Debug.Log("responseString: " + responseString);
                     }
                 }
             } else {

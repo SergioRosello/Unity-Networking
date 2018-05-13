@@ -457,8 +457,8 @@ MonoBehaviour:
     type: 2}
   EnemyPrefab: {fileID: 1292521762093972, guid: 170301dc0bbb5b7478e6351dced4903b,
     type: 2}
-  MapWidth: -871
-  MapHeight: -1102
+  MapWidth: 10
+  MapHeight: 10
   OtherPlayerPrefab: {fileID: 1913822339637818, guid: 79ff604374e8d4a0c9f88a4ae109428a,
     type: 2}
   MapVersion: 0
