@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
+using UnityEngine.UI;
 
 public class OnlineGameManager : GameManager {
     public GameObject OtherPlayerPrefab;
     public int MapVersion;
     public string HostIp;
     public int HostPort;
+    public Text highScoreText;
 
     public const string INITIAL_REQUEST = "initial";
     public const string UPDATE_REQUEST = "update";
@@ -17,6 +19,7 @@ public class OnlineGameManager : GameManager {
     protected int _playerId;
     protected Dictionary<int, OtherPlayer> _otherPlayers;
     protected TAPNet _client;
+    protected int highscore = -1;
 
     // Use this for initialization
     protected override void Awake () {
@@ -73,6 +76,7 @@ public class OnlineGameManager : GameManager {
         } else if (json["type"].Value == UPDATE_REQUEST) {
             var gameState = json["state"];
             RemainingTime = gameState["timer"].AsInt;
+
             // Lista de cambios que tenemos que hacer en el mapa
             foreach (var version in gameState["map_changes"].AsArray) {
                 MapVersion++;
@@ -118,6 +122,20 @@ public class OnlineGameManager : GameManager {
                         otherPlayer.Name = value["playerName"];
                         _otherPlayers[key] = otherPlayer;
                     }
+
+                    // Actualizamos los datos de posicion, velocidad y puntuacion de todos
+                    _otherPlayers[key].GetComponent<Character>().SetPosition(new Vector2(pair.Value["position"]["x"], pair.Value["position"]["y"]));
+                    _otherPlayers[key].GetComponent<OtherPlayer>().Velocity = pair.Value["velocity"];
+                    _otherPlayers[key].GetComponent<OtherPlayer>().Score = pair.Value["score"];
+                }
+                else {
+                    _player.GetComponent<Health>().CurrentHealth = pair.Value["health"];
+                    _player.GetComponent<Character>().Score = pair.Value["score"];
+                }
+                // Actualizamos el HUD para que tenga siempre la puntuacion mas alta de todos los jugadores conectados a la partida.
+                if (pair.Value["score"].AsInt >= highscore) {
+                    highscore = pair.Value["score"].AsInt;
+                    highScoreText.text = "TOP: " + pair.Value["playerName"] + " " +  pair.Value["score"];
                 }
             }
         }
@@ -156,5 +174,11 @@ public class OnlineGameManager : GameManager {
             chestId = chestId,
             playerId = _playerId
         };
+        // Envia de forma confiable una petición diciendo que hemos cogido un cofre
+        _client.Send(chestRequest.ToJson(), TAPNet.DATAGRAM_RELIABLE);
     }
+		
+	void OnDestroy() {
+		_client.Cleanup ();
+	}
 }

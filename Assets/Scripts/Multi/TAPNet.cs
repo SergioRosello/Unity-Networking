@@ -10,7 +10,8 @@ using System.Threading;
 using System.Security.Cryptography;
 using SimpleJSON;
 
-public class TAPNet {
+public class TAPNet
+{
     public const int DATAGRAM_ACK = 0;
     public const int DATAGRAM_NORMAL = 1;
     public const int DATAGRAM_RELIABLE = 2;
@@ -27,7 +28,8 @@ public class TAPNet {
     protected Dictionary<int, NetworkRequest> _pendingSentRequests;
 
 
-    public TAPNet(string hostIp, int hostPort) {
+    public TAPNet(string hostIp, int hostPort)
+    {
         this.hostIp = hostIp;
         this.hostPort = hostPort;
 
@@ -45,9 +47,11 @@ public class TAPNet {
     /// <summary>
     /// Se ejecuta en segundo plano. Escucha los mensajes que llegan desde el servidor
     /// </summary>
-    public void Listen() {
+    public void Listen()
+    {
         Debug.Log("Listening...");
-		while (true) {
+        while (true)
+        {
             var data = _client.Receive(ref _hostEP);
             Debug.Log(data);
             ReceivedData(data);
@@ -58,7 +62,8 @@ public class TAPNet {
     /// Envía una NetworkRequest al servidor
     /// </summary>
     /// <param name="dataToSend">Req.</param>
-    public void Send(string dataToSend, int request_type = DATAGRAM_NORMAL) {
+    public void Send(string dataToSend, int request_type = DATAGRAM_NORMAL)
+    {
         var msg = Encoding.UTF8.GetBytes(dataToSend);
 
         byte[] datagram = BitConverter.GetBytes(request_type)
@@ -68,19 +73,24 @@ public class TAPNet {
 
         _datagramId++;
 
-        if (request_type == DATAGRAM_RELIABLE) {
+        if (request_type == DATAGRAM_RELIABLE)
+        {
             //Apuntamos este paquete como 'pendiente de confirmar su recepción'
             var req = new NetworkRequest(_datagramId, datagram);
             _pendingSentRequests[_datagramId] = req;
         }
-        try {
+        try
+        {
             _client.Send(datagram, datagram.Length);
-        } catch (SocketException e) {
+        }
+        catch (SocketException e)
+        {
             Debug.Log(e);
         }
     }
 
-    void Resend(int datagramId) {
+    void Resend(int datagramId)
+    {
         // TODO: Implementar
         SendAck(datagramId, BitConverter.ToInt32(_pendingSentRequests[datagramId].data, 44));
     }
@@ -90,14 +100,18 @@ public class TAPNet {
     /// </summary>
     /// <param name="datagramId">Datagram identifier.</param>
     /// <param name="chunkId">Chunk identifier.</param>
-    void SendAck(int datagramId, int chunkId) {
+    void SendAck(int datagramId, int chunkId)
+    {
         byte[] datagram = BitConverter.GetBytes(DATAGRAM_ACK)
                                       .Concat(BitConverter.GetBytes(datagramId))
                                       .Concat(BitConverter.GetBytes(chunkId))
                                       .ToArray();
-        try {
+        try
+        {
             _client.Send(datagram, datagram.Length);
-        } catch (SocketException e) {
+        }
+        catch (SocketException e)
+        {
             Debug.Log(e);
         }
     }
@@ -105,12 +119,16 @@ public class TAPNet {
     /// <summary>
     /// Comprueba que hayan llegado los ACK de los paquetes confiables enviados
     /// </summary>
-    IEnumerator CheckAcks() {
+    IEnumerator CheckAcks()
+    {
         // No hacer más de N reintentos
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
+        {
             var now = DateTime.Now;
-            foreach (var k in _pendingSentRequests.Keys) {
-                if (now.Subtract(_pendingSentRequests[k].timeStamp).TotalSeconds > 1.5) {
+            foreach (var k in _pendingSentRequests.Keys)
+            {
+                if (now.Subtract(_pendingSentRequests[k].timeStamp).TotalSeconds > 1.5)
+                {
                     Debug.Log("Resending " + k);
                     Resend(k);
                 }
@@ -125,7 +143,8 @@ public class TAPNet {
     /// </summary>
     /// <returns>El SHA256 calculado.</returns>
     /// <param name="source">Bytes de los que queremos hallar el SHA256.</param>
-    byte[] CalculateSha256(byte[] source) {
+    byte[] CalculateSha256(byte[] source)
+    {
         return SHA256.Create().ComputeHash(source);
     }
 
@@ -135,52 +154,72 @@ public class TAPNet {
     /// <returns><c>true</c> Si los hashes son iguales, <c>false</c> en caso contrario.</returns>
     /// <param name="a">Primer hash a comparar.</param>
     /// <param name="b">Segundo hash a comparar.</param>
-    bool CompareSha256(byte[] a, byte[] b) {
+    bool CompareSha256(byte[] a, byte[] b)
+    {
         return a.SequenceEqual(b);
     }
 
-    void ReceivedData(byte[] data) {
-        try {
+    void ReceivedData(byte[] data)
+    {
+        try
+        {
 
             var datagramType = BitConverter.ToInt32(data, 0); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 0
             var datagramId = BitConverter.ToInt32(data, 4); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 4
 
-            if (datagramType != DATAGRAM_ACK) {
+            if (datagramType != DATAGRAM_ACK)
+            {
                 var expectedSha256 = data.Sub(8, 32);  // Obtener de los datos recibidos, son 32 bytes, empezando por el 8
                 var numberOfChunks = BitConverter.ToInt32(data, 40); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 40
                 var currentChunk = BitConverter.ToInt32(data, 44); // Obtener de los datos recibidos, es un Int32 codificado en 4 bytes, empezando por el 44
 
-                if (!_receivedDatagrams.ContainsKey(datagramId)) {
+                if (!_receivedDatagrams.ContainsKey(datagramId))
+                {
                     _receivedDatagrams[datagramId] = new string[numberOfChunks];
                 }
                 var obtainedSha256 = CalculateSha256(data.Sub(48, data.Length - 48)); // Calculamos el Sha256 del mensaje (bytes desde el 48 hasta el final)
 
                 // dar por buenos los paquetes validados
-                if(CompareSha256(expectedSha256, obtainedSha256)){
+                if (CompareSha256(expectedSha256, obtainedSha256))
+                {
                     _receivedDatagrams[datagramId][currentChunk] = Encoding.UTF8.GetString(data.Sub(48, data.Length - 48));
                     // Enviar el ACK si el paquete es bueno
                     SendAck(datagramId, currentChunk);
                 }
 
-                if (!_receivedDatagrams[datagramId].Any(y => y == null)) {
+                if (!_receivedDatagrams[datagramId].Any(y => y == null))
+                {
                     // Hemos recibido todas las partes correctamente
                     var responseString = String.Join("", _receivedDatagrams[datagramId]);
 
                     _receivedDatagrams.Remove(datagramId);
-                    if (onResponseReceived != null) {
+                    if (onResponseReceived != null)
+                    {
                         onResponseReceived(JSON.Parse(responseString));
-                        Debug.Log("responseString: " + responseString);
                     }
                 }
-            } else {
+            }
+            else
+            {
                 // Si es un ACK, vemos qué paquete nos están confirmando
                 // y lo eliminamos de la lista de pendientes por confirmar
                 _pendingSentRequests.Remove(datagramId);
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             Debug.LogError(ex);
         }
     }
+
+    /// <summary>
+    /// Libera los recursos utilizados por el cliente
+    /// </summary>
+    public void Cleanup()
+    {
+        _client.Close();
+    }
+
 
     /// <summary>
     /// Tipo de delegado que se encargará de procesar las respuestas a nuestras peticiones
