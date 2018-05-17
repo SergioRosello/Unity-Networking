@@ -186,6 +186,8 @@ public class OnlineGameManager : GameManager
             if (otherPlayersControl.Count > 0) {
                 foreach (var pair in otherPlayersControl) {
                     _otherPlayers[pair.Key].GetComponent<Health>().CurrentHealth = 0;
+                    Destroy(_otherPlayers[pair.Key].gameObject);
+                    _otherPlayers.Remove(pair.Key);
                 }
                 // Si hemos usado el diccionario de control, lo reestablecemos
                 otherPlayersControl.Clear();
@@ -232,7 +234,7 @@ public class OnlineGameManager : GameManager
             chestId = chestId,
             playerId = _playerId
         };
-
+        // Comunicamos al servidor que se ha cogido un cofre
         _client.Send(chestRequest.ToJson(), TAPNet.DATAGRAM_RELIABLE);
     }
 
