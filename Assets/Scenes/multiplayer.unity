@@ -464,7 +464,7 @@ MonoBehaviour:
   MapVersion: 0
   HostIp: 193.147.14.122
   HostPort: 10000
-  highScoreText: {fileID: 420229687}
+  highscoreText: {fileID: 420229687}
 --- !u!114 &1477765429
 MonoBehaviour:
   m_ObjectHideFlags: 0
